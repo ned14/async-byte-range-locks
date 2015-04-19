@@ -1,45 +1,5 @@
 // A Rust implementation of byte range locks
 
-/// Module implementing a map as a sorted vector as BTreeMap isn't up to needs
-mod vector_map {
-  #[derive(Clone)]
-  struct VectorMapItem<K, V> {
-    key: K,
-    value: V,
-  }
-  
-  /// A map implemented as a sorted vector
-  #[derive(Clone)]
-  pub struct VectorMap<K, V> {
-    root: Vec<VectorMapItem<K, V>>
-  }
-  
-  impl<K: Ord, V> VectorMap<K, V> {
-    pub fn new() -> VectorMap<K, V> {
-      VectorMap<K, V> { root : Vec::<VectorMapItem<K, V>>::new() }
-    }
-    
-    /// Find the nearest key matching
-    fn binary_search(&self, key : K) -> Result<usize, usize> {
-      let s = &self.root[..];
-      s.binary_search_by(|x| x.key.cmp(&key));
-    }
-    
-    /// Clears the map, removing all values
-    pub fn clear(&mut self) {
-      self.root.clear();
-    }
-    
-    /// Inserts a value into the map, returning any exact match formerly there if any
-    pub fn insert(&mut self, key : K, value : V) -> Option<V> {
-      match self.binary_search(key) {
-        Err(index) =>,
-        Ok(index) => let oldvalue = self.root[index].value; self.root[index].value = value; oldvalue,
-      }
-    }
-  }
-}
-
 /// Module implementing file byte range locks
 mod file_byte_range_locks {
   use std::collections::btree_map::BTreeMap;
