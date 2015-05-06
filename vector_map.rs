@@ -30,7 +30,12 @@ mod vector_map {
       self.root.clear();
     }
     
-    // FIXME TODO Allow K to be not a reference
+    /// Returns the length of the map
+    pub fn len(&self) -> usize { self.root.len() }
+    
+    /// Return if the map is empty
+    pub fn is_empty(&self) -> bool { self.root.is_empty() }
+    
     /// Returns a reference to an exact match (Ok) or nearest match (Err) for the specified key
     pub fn get(&self, key: &K) -> Result<&VectorMapItem<K, V>, &VectorMapItem<K, V>> {
       match self.binary_search(key) {
@@ -59,7 +64,25 @@ mod vector_map {
         },
       }
     }
+    
+    /// Returns an iterator
+    pub fn iter(&self) -> Iter<K, V> {
+      self.root.iter()
+    }
+    
+    /// Returns an iterator over the keys
+    pub fn keys<'a>(&'a self) -> Keys<'a, K, V> {
+      Keys(self.iter().map(|i|{ i.key }))
+    }
+    
+    /// Returns an iterator over the values
+    pub fn values<'a>(&'a self) -> Values<'a, K, V> {
+      Values(self.iter().map(|i|{ i.value }))
+    }
   }
+  
+  pub struct Iter<'a, K:'a, V:'a> {
+    iter: Vec<VectorMapItem<K, V>>
 }
 
 #[cfg(test)]
@@ -88,11 +111,18 @@ mod test {
   fn insert_works() {
     use super::vector_map::VectorMap;
     let mut v = VectorMap::new();
-    assert_eq!(v.insert(1, "niall1"), None);
-    assert_eq!(v.insert(4, "niall4"), None);
-    assert_eq!(v.insert(2, "niall2"), None);
-    assert_eq!(v.insert(3, "niall3"), None);
+    assert_eq!(v.insert(10, "niall10"), None);
+    assert_eq!(v.insert(40, "niall40"), None);
+    assert_eq!(v.insert(20, "niall20"), None);
+    assert_eq!(v.insert(30, "niall30"), None);
     assert_eq!(v.insert(0, "niall0"), None);
-    assert!(matches!(v.get(&1).ok(), Some(x) if x.value == "niall1"));
+    assert_eq!(v.len(), 5);
+    for i in v {
+      println!("{}", i);
+    }
+    // Exact match
+    assert!(matches!(v.get(&10).ok(), Some(x) if x.value == "niall0"));
+    v.clear();
+    assert!(v.is_empty());
   }
 }
